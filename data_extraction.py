@@ -1,10 +1,3 @@
-'''
-This class will work as a utility class, in it you will be creating 
-methods that help extract data from different data sources.
-The methods contained will be fit to extract data from a #
-particular data source, these sources will include CSV files, 
-an API and an S3 bucket
-'''
 import pandas as pd
 from sqlalchemy import create_engine, inspect, text
 from database_utils import DataBaseConnector
@@ -49,6 +42,6 @@ for table in tables:
     print(table)
 
 
-# Read data from a specific table (replace 'your_table_name' with an actual table name)
+# Read data from a specific table
 df_table_data = data_extractor.read_rds_table('legacy_users')
-print(df_table_data.info()) 
+print(df_table_data.isna().any()) 
