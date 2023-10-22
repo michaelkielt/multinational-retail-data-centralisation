@@ -5,10 +5,12 @@ The methods contained will be fit to extract data from a #
 particular data source, these sources will include CSV files, 
 an API and an S3 bucket
 '''
-from sqlalchemy import create_engine, inspect
+import pandas as pd
+from sqlalchemy import create_engine, inspect, text
 from database_utils import DataBaseConnector
 
-# Creates instance of database_utils class to connect
+
+# Creates instance of DatabaseConnecter class to connect
 # to db and generate engine
 db_connector = DataBaseConnector()
 db_engine = db_connector.init_db_engine()
@@ -24,14 +26,18 @@ class DataExtractor:
         return table_names
     
     
-    
-    def read_rds_tables(self, table_name):
-        # Use db engine to execute a SELECT query on returned tables
+    def read_rds_table(self, table_name):
+        # Create a SQLAlchemy text object with the sql query
+        query = text(f"SELECT * FROM {table_name}")
+
+        # Use db engine to execute the query on one of returned tables
         with self.engine.connect() as connection:
-            query = f"SELECT * FROM {table_name}"
             result = connection.execute(query)
             data = result.fetchall()
-            return data
+            
+        # Convert the data to a dataframe
+        df = pd.DataFrame(data)
+        return df
 
 # Creates data extractor instance with db engine
 data_extractor = DataExtractor(db_engine)
@@ -44,7 +50,5 @@ for table in tables:
 
 
 # Read data from a specific table (replace 'your_table_name' with an actual table name)
-table_data = data_extractor.read_rds_tables('legacy_store_details')
-print("Data from this table: ")
-for row in table_data:
-    print(row)    
+df_table_data = data_extractor.read_rds_table('legacy_users')
+print(df_table_data.info()) 
