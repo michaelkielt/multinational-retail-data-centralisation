@@ -14,7 +14,7 @@ class DataBaseConnector:
     def init_db_engine():
         db_config = DataBaseConnector.read_db_creds()
         db_url = create_engine(
-            dialect="postgresql",
+            dialect="postgresql+psycopg2",
             username=db_config['aicore_admin'],
             password=db_config['AiCore2022'],
             host=db_config['data-handling-project-readonly.cq2e8zno855e.eu-west-1.rds.amazonaws.com'],
