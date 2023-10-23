@@ -47,7 +47,7 @@ for table in tables:
 # Read data from a specific table
 legacy_user_data = data_extractor.read_rds_table('legacy_users')
 
-# Now, create an instance of the DataCleaning class and pass the table_data for cleaning
+# Creates an instance of the DataCleaning class and passes the table_data for cleaning
 data_cleaner = DataCleaning(legacy_user_data)
 
 # Call the clean_user_data method to clean the data
