@@ -17,6 +17,24 @@ class DataBaseConnector:
 
         engine = create_engine(db_url)
         return engine
+    
+    # Separate function to generate an engine for the local database
+    def init_local_db_engine(self):
+    # Create an engine for the local database
+        db_url = "postgresql+psycopg2://postgres:t0ymach1ne@localhost:5432/sales_data"
+        engine = create_engine(db_url)
+        return engine
+    
+    # Uploads cleaned data to postgres database
+    def upload_to_db(self, df, table_name):
+        try:
+            # Use the local engine to upload the Pandas DataFrame to the specified table
+            local_engine = self.init_local_db_engine()
+            df.to_sql(table_name, local_engine, if_exists='replace', index=False)
+            print(f"Uploaded DataFrame to table: {table_name}")
+        except Exception as e:
+            print(f"An error occurred while uploading the DataFrame to the local database: {str(e)}") 
+
 
         
         
