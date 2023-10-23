@@ -20,7 +20,7 @@ class DataBaseConnector:
     
     # Separate function to generate an engine for the local database
     def init_local_db_engine(self):
-    # Create an engine for the local database
+        # Create an engine for the local database
         db_url = "postgresql+psycopg2://postgres:t0ymach1ne@localhost:5432/sales_data"
         engine = create_engine(db_url)
         return engine
