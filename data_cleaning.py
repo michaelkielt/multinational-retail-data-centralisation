@@ -10,7 +10,22 @@ class DataCleaning:
     def clean_user_data(self):
         # Replace "NULL" string objects with actual NaN values then drop them
         self.data.replace("NULL", np.nan, inplace=True)
-        self.data.dropna(inplace=True) 
+        self.data.dropna(inplace=True)
+
+        # Define a function to convert worded dates to 'YYYY-MM-DD'
+        def convert_worded_date(worded_date):
+            if re.match(r'\d{4} \w+ \d{2}', worded_date):
+                parts = worded_date.split()
+                year = parts[0]
+                month = parts[1]
+                day = parts[2]
+                return f"{year}-{month}-{day}"
+            else:
+                return worded_date
+
+        # Apply the worded date conversion function to the date column
+        self.data['join_date'] = self.data['join_date'].apply(convert_worded_date)
+        self.data['date_of_birth'] = self.data['date_of_birth'].apply(convert_worded_date)
         
         # Convert 'date_of_birth' and 'join_date' columns to datetime
         self.data['date_of_birth'] = pd.to_datetime(self.data['date_of_birth'], errors='coerce')
@@ -48,7 +63,12 @@ class DataCleaning:
             return phone_num
 
         # Apply the cleaning function to the 'phone_number' column
-        self.data['phone_number'] = self.data['phone_number'].apply(clean_phone_number)
+        self.data.loc[:, 'phone_number'] = self.data['phone_number'].apply(clean_phone_number)
+
+        # Replacing the newline characters in the address column with a space
+        self.data.loc[:, 'address'] = self.data['address'].str.replace('\n', ' ')
+
+
 
         return self.data
 

@@ -53,9 +53,12 @@ data_cleaner = DataCleaning(legacy_user_data)
 # Call the clean_user_data method to clean the data
 cleaned_data = data_cleaner.clean_user_data()
 print(cleaned_data.info())
+print(cleaned_data['date_of_birth'].dtypes)
+print(cleaned_data['join_date'].dtypes)
 
-# Upload cleaned data to postgres database
+# Upload cleaned data to postgres database#
 db_connector.upload_to_db(cleaned_data, "dim_user")
+
 
 
 
