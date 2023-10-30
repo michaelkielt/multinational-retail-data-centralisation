@@ -1,13 +1,14 @@
+from sqlalchemy import create_engine, inspect, text
+from database_utils import DataBaseConnector
+from data_cleaning import DataCleaning
+from io import StringIO
 import pandas as pd
 import numpy as np
 import requests 
 import tabula
 import boto3
 import json
-from sqlalchemy import create_engine, inspect, text
-from database_utils import DataBaseConnector
-from data_cleaning import DataCleaning
-from io import StringIO
+
 
 
 # Creates instance of DatabaseConnecter class to connect.
@@ -145,7 +146,7 @@ class DataExtractor:
 
 
 
-
+"""
 # Creates data extractor instance with db engine
 data_extractor = DataExtractor(db_engine)
 
@@ -156,7 +157,7 @@ for table in tables:
     print(table)
 
 
-"""
+
 Read data from a specific table
 legacy_user_data = data_extractor.read_rds_table('legacy_users')
 
