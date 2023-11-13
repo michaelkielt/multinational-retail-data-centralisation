@@ -11,7 +11,7 @@ Multinational Retail Data Centralisation
 
 ### Description
 
-This project, the Multinational Retail Data Centralisation tool, is a robust solution designed for comprehensive data management within a large-scale retail organisation. The primary aim is to streamline the intricate process of consolidating diverse data sets, including order details, product information, user details, and store data.
+This  Multinational Retail Data Centralisation tool is a robust solution designed for comprehensive data management within a large-scale retail organisation. The primary aim is to streamline the intricate process of consolidating diverse data sets, including order details, product information, user details, and store data.
 
 #### Objectives:
 
@@ -22,6 +22,8 @@ This project, the Multinational Retail Data Centralisation tool, is a robust sol
 - **Data Quality Assurance:** A suite of data cleaning and validation methods ensures the data is in ideal condition. It addresses missing values, data type conversion, and formatting intricacies, guaranteeing accuracy, consistency, and analysis readiness.
 
 - **Centralised Database:** The project culminates in the centralisation of data into a Postgres database. This centralised storage ensures accessibility, security, and efficiency for future analytical endeavours.
+
+- **Metrics Extraction:** Obtaining up-to-date metrics from the centralised database empowers the business to make more data-driven decisions. This feature involves extracting relevant data using specific SQL queries.
 
 #### Learning Outcomes:
 
@@ -34,6 +36,8 @@ Throughout the development of this tool, key insights were gained:
 - **Primary Key Implementation in Dimensions:** Establishing primary keys in dimension tables ensures data uniqueness but also contributes to maintaining data integrity. This foundational step enhances data quality and supports reliable table joins.
 
 - **Foreign Key Constraints for Referential Integrity:** Adding foreign key constraints in the orders table proved crucial for establishing relationships with dimension tables. This not only enhances data consistency but also optimises query performance.
+
+- **SQL Expertise for Business Insights:** Utilising Common Table Expressions (CTEs), joins, functions such as COUNT and ROUND and various other clauses in SQL queries for extracting metrics. This enhances the business's understanding of its sales, facilitating more informed decision-making processes. 
 
  The experience garnered from implementing these features has been invaluable in advancing my expertise in data management and analysis.
 
