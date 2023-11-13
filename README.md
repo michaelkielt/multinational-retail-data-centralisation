@@ -1,5 +1,4 @@
-## Project Title
-Multinational Retail Data Centralisation
+## Multinational Retail Data Centralisation
 
 ## Table of Contents
 - [Description](#description)
