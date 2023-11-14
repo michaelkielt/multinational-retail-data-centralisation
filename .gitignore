@@ -1,3 +1,2 @@
-# Ignore database credentials
 db_creds.yaml
-aws_credentials.json
+
