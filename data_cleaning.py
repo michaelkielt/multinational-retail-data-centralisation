@@ -26,13 +26,16 @@ class DataCleaning:
             Convert product weights to kilograms in a separate DataFrame.
 
         _clean_products_data(self) -> pandas.DataFrame:
-            Clean products data within the DataFrame. Rename columns, replace "NULL" values, and filter invalid rows.
+            Clean products data within the DataFrame. Rename columns, replace "NULL" values, and filter invalid rows with erroneous 
+            values.
 
         _clean_orders_data(self) -> pandas.DataFrame:
-            Clean orders data within the DataFrame. Remove specified columns, validate and clean 'card_number,' and filter invalid rows.
+            Clean orders data within the DataFrame. Remove specified columns, validate and clean 'card_number,' and filter invalid rows 
+            with erroneous values.
 
         _clean_date_events_data(self) -> pandas.DataFrame:
-            Clean date events data within the DataFrame. Replace "NULL" values, filter invalid rows, convert "timestamp" column, and validate date-related columns.
+            Clean date events data within the DataFrame. Replace "NULL" values, filter invalid rows rows with erroneous values, convert 
+            "timestamp" column, and validate date-related columns.
 
     """
     
@@ -50,54 +53,46 @@ class DataCleaning:
         """
         Clean user data in the DataFrame.
 
-        - Replaces "NULL" string objects with actual NaN values and drops them.
+        - Replaces "NULL" string objects with actual NaN values in 'user_uuid' and drops them.
         - Converts worded dates to 'YYYY-MM-DD' format.
-        - Converts 'date_of_birth' and 'join_date' columns to datetime.
         - Cleans phone numbers.
         - Replaces newline characters in the address column with spaces.
 
         Returns:
         pandas.DataFrame: The cleaned DataFrame.
         """
-        self.data.replace("NULL", np.nan, inplace=True)
-        self.data.dropna(inplace=True)
+        self.data['user_uuid'] = self.data['user_uuid'].replace("NULL", np.nan)
+        self.data.dropna(subset=['user_uuid'], inplace=True)
+
 
         def convert_worded_date(worded_date):
-            if re.match(r'\d{4} \w+ \d{2}', worded_date):
-                parts = worded_date.split()
-                year = parts[0]
-                month = parts[1]
-                day = parts[2]
+        # Check if the date matches the format 'YYYY Month DD' or 'Month YYYY DD'.
+            match = re.match(r'(\d{4})-(\w+)-(\d{2})|(\d{4})-(\d{2})-(\w+)', worded_date)
+    
+            if match:
+                year = match.group(1) or match.group(4)
+                month = match.group(2) or match.group(3)
+                day = match.group(3) or match.group(6)
                 return f"{year}-{month}-{day}"
             else:
                 return worded_date
 
         self.data['join_date'] = self.data['join_date'].apply(convert_worded_date)
         self.data['date_of_birth'] = self.data['date_of_birth'].apply(convert_worded_date)
-        
-        self.data['date_of_birth'] = pd.to_datetime(self.data['date_of_birth'], errors='coerce')
-        self.data['join_date'] = pd.to_datetime(self.data['join_date'], errors='coerce')
-
-        self.data['date_of_birth'] = self.data['date_of_birth'].dt.strftime('%Y-%m-%d')
-        self.data['join_date'] = self.data['join_date'].dt.strftime('%Y-%m-%d')
 
         pattern = r'^[A-Z0-9][A-Za-z0-9]{9}$'
  
         def contains_pattern(row):
-            for value in row:
-                if re.search(pattern, str(value)):
+            if re.search(pattern, str(row['user_uuid'])):
                     return True
             return False
 
         self.data = self.data[~self.data.apply(contains_pattern, axis=1)]
 
         def clean_phone_number(phone_num):
-            # Remove non-numeric characters except 'x'.
-            phone_num = re.sub(r'[^0-9x]', '', phone_num)
-            # Remove leading '0' or '+'.
-            phone_num = re.sub(r'^[0+]', '', phone_num)
-            # Remove 'x' and anything after it.
-            phone_num = re.sub(r'x.*$', '', phone_num)
+        # Remove 'x' and anything after it, and remove the '.'.
+            phone_num = re.sub(r'x.*', '', phone_num)
+            phone_num = phone_num.replace('.', '-')
 
             return phone_num
 
@@ -112,35 +107,44 @@ class DataCleaning:
         """
         Clean card data in the DataFrame.
 
-        - Replaces "NULL" string objects with actual NaN values and drops them.
-        - Filters out rows with invalid date formats in 'date_payment_confirmed'.
+        - Replaces "NULL" string objects in 'expiry_date' with actual NaN values and drops them.
+        - Converts invalid date formats to 'YYYY-MM-DD' in 'date_payment_confirmed'.
         - Validates and cleans 'card_number' column.
 
         Returns:
         pandas.DataFrame: The cleaned DataFrame.
         """
-        self.data.replace("NULL", np.nan, inplace=True)
+        self.data['expiry_date'] = self.data['expiry_date'].replace("NULL", np.nan)
         self.data.dropna(inplace=True)
 
-        def is_valid_date(date):
-            try:
-                dt.datetime.strptime(date, '%Y-%m-%d')
-                return True
-            except ValueError:
-                return False
+        def convert_worded_date(worded_date):
+        # Check if the date matches the format 'YYYY Month DD' or 'Month YYYY DD'.
+            match = re.match(r'(\d{4})-(\w+)-(\d{2})|(\d{4})-(\d{2})-(\w+)', worded_date)
+    
+            if match:
+                year = match.group(1) or match.group(4)
+                month = match.group(2) or match.group(3)
+                day = match.group(3) or match.group(6)
+                return f"{year}-{month}-{day}"
+            else:
+                return worded_date
 
-        self.data = self.data[self.data['date_payment_confirmed'].apply(is_valid_date)]
+        self.data['date_payment_confirmed'] = self.data['date_payment_confirmed'].apply(convert_worded_date)
 
-        def validate_card_number(card_num):
-            # Regular expression pattern for card numbers with lengths in the range 12-19.
-            pattern = r'^\d{12,19}$'
-            return bool(re.match(pattern, str(card_num)))
+        pattern = r'^[A-Z0-9][A-Za-z0-9]{9}$'
+ 
+        def contains_pattern(row):
+            if re.search(pattern, str(row['expiry_date'])):
+                    return True
+            return False
 
-        self.data['is_valid_card_number'] = self.data['card_number'].apply(validate_card_number)
+        self.data = self.data[~self.data.apply(contains_pattern, axis=1)]
 
-        self.data = self.data[self.data['is_valid_card_number']]
+        def clean_card_number(card_num):
+        # Remove commas from the card number.
+            return re.sub(',', '', str(card_num))
 
-        self.data.drop(columns=['is_valid_card_number'], inplace=True)
+        self.data['card_number'] = self.data['card_number'].apply(clean_card_number)
 
         return self.data
     
@@ -151,8 +155,6 @@ class DataCleaning:
 
         - Overwrites 'lat' column with 'latitude' values.
         - Drops the original 'latitude' column.
-        - Replaces "NULL" string objects with actual NaN values and drops them.
-        - Filters out rows with invalid date formats in 'opening_date'.
         - Cleans the address and 'continent' columns.
 
         Returns:
@@ -163,25 +165,12 @@ class DataCleaning:
         self.data.drop(columns=['latitude'], inplace=True)
 
         self.data.rename(columns={'lat': 'latitude'}, inplace=True)
-        
-        self.data.replace("NULL", np.nan, inplace=True)
-        self.data.dropna(inplace=True)
-
-        def is_valid_date(date):
-            try:
-                dt.datetime.strptime(date, '%Y-%m-%d')
-                return True
-            except ValueError:
-                return False
-
-        self.data = self.data[self.data['opening_date'].apply(is_valid_date)]
 
         pattern = r'^[A-Z0-9][A-Za-z0-9]{9}$'
 
         def contains_pattern(row):
-            for value in row:
-               if re.search(pattern, str(value)):
-                   return True
+            if re.search(pattern, str(row['country_code'])):
+                    return True
             return False
 
         self.data = self.data[~self.data.apply(contains_pattern, axis=1)]
@@ -189,6 +178,8 @@ class DataCleaning:
         self.data.loc[:, 'address'] = self.data['address'].str.replace('\n', ' ')
 
         self.data.loc[:, 'continent'] = self.data['continent'].str.replace('ee', '')
+        
+        self.data['staff_numbers'] = self.data['staff_numbers'].str.replace(r'[^0-9]', '')
 
         return self.data
     
@@ -213,11 +204,11 @@ class DataCleaning:
                 value = float(value)
 
                 if unit == "g":
-                    result = value / 1000  # Convert grams to kg.
+                    result = value / 1000 
                 elif unit == "ml":
-                    result = value / 1000  # Convert milliliters to kg.
+                    result = value / 1000 
                 else:
-                    result = value  # Assume other units are already in kg.
+                    result = value
 
                 return round(result, 4)
 
@@ -232,32 +223,36 @@ class DataCleaning:
         Clean products data in the DataFrame.
 
         - Renames the first column to 'index'.
-        - Replaces "NULL" string objects with actual NaN values and drops them.
-        - Filters out rows with invalid date formats.
+        - Replaces "NULL" string objects in 'product_code' with actual NaN values and drops them.
+        - Converts invalid date formats to YYYY-MM-DD.
         
         Returns:
         pandas.DataFrame: The cleaned DataFrame.
         """
         self.data.rename(columns={self.data.columns[0]: 'index'}, inplace=True)
 
-        self.data.replace("NULL", np.nan, inplace=True)
+        self.data['product_code'] = self.data['product_code'].replace("NULL", np.nan)
         self.data.dropna(inplace=True)
 
-        def is_valid_date(date):
-            try:
-                dt.datetime.strptime(date, '%Y-%m-%d')
-                return True
-            except ValueError:
-                return False
+        def convert_worded_date(worded_date):
+        # Check if the date matches the format 'YYYY Month DD' or 'Month YYYY DD'.
+            match = re.match(r'(\d{4})-(\w+)-(\d{2})|(\d{4})-(\d{2})-(\w+)', worded_date)
+    
+            if match:
+                year = match.group(1) or match.group(4)
+                month = match.group(2) or match.group(3)
+                day = match.group(3) or match.group(6)
+                return f"{year}-{month}-{day}"
+            else:
+                return worded_date
 
-        self.data = self.data[self.data['date_added'].apply(is_valid_date)]
+        self.data['date_added'] = self.data['date_added'].apply(convert_worded_date)
 
         pattern = r'^[A-Z0-9][A-Za-z0-9]{9}$'
 
         def contains_pattern(row):
-            for value in row:
-               if re.search(pattern, str(value)):
-                   return True
+            if re.search(pattern, str(row['uuid'])):
+                    return True
             return False
 
         self.data = self.data[~self.data.apply(contains_pattern, axis=1)]
@@ -271,7 +266,7 @@ class DataCleaning:
         - Removes specified columns.
         - Converts 'card_number' column to string and removes commas.
         - Validates and cleans 'card_number' column.
-        - Filters out rows with invalid values.
+        - Filters out rows with erroneous values.
 
         Returns:
         pandas.DataFrame: The cleaned DataFrame.
@@ -281,23 +276,11 @@ class DataCleaning:
 
         self.data['card_number'] = self.data['card_number'].astype(str).str.replace(',', '', regex=True)
 
-        def validate_card_number(card_num):
-            # Regular expression pattern for card numbers with lengths in the range 12-19.
-            pattern = r'^\d{12,19}$'
-            return bool(re.match(pattern, str(card_num)))
-
-        self.data['is_valid_card_number'] = self.data['card_number'].apply(validate_card_number)
-
-        self.data = self.data[self.data['is_valid_card_number']]
-
-        self.data.drop(columns=['is_valid_card_number'], inplace=True)
-
         pattern = r'^[A-Z0-9][A-Za-z0-9]{9}$'
 
         def contains_pattern(row):
-            for value in row:
-               if re.search(pattern, str(value)):
-                   return True
+            if re.search(pattern, str(row['date_uuid'])):
+                    return True
             return False
 
         self.data = self.data[~self.data.apply(contains_pattern, axis=1)]

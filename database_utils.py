@@ -1,5 +1,6 @@
-import yaml
 from sqlalchemy import create_engine
+import yaml
+
 
 class DataBaseConnector:
     """
@@ -15,10 +16,10 @@ class DataBaseConnector:
             Reads database credentials from a YAML file and returns them as a dictionary.
 
         _init_db_engine(self) -> sqlalchemy.engine.base.Connection:
-            Initializes a SQLAlchemy database engine using the retrieved credentials for a remote database.
+            Initialises a SQLAlchemy database engine using the retrieved credentials for a remote database.
 
         _init_local_db_engine(self) -> sqlalchemy.engine.base.Connection:
-            Initializes a SQLAlchemy database engine for a local database with pre-defined credentials.
+            Initialises a SQLAlchemy database engine for a local database with pre-defined credentials.
 
         _upload_to_db(self, df: pandas.DataFrame, table_name: str):
             Uploads a cleaned Pandas DataFrame to a PostgreSQL database table, replacing the existing data.
@@ -59,7 +60,8 @@ class DataBaseConnector:
         Returns:
             sqlalchemy.engine.base.Connection: An initialized SQLAlchemy database engine for a local database.
         """
-        db_url = "postgresql+psycopg2://postgres:t0ymach1ne@localhost:5432/sales_data"
+        db_config = self._read_db_creds()
+        db_url = f"postgresql+psycopg2://{db_config['LOCAL_RDS_USER']}:{db_config['LOCAL_RDS_PASSWORD']}@{db_config['LOCAL_RDS_HOST']}:{db_config['LOCAL_RDS_PORT']}/{db_config['LOCAL_RDS_DATABASE']}"
         engine = create_engine(db_url)
         return engine
     
