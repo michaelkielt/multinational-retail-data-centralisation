@@ -10,7 +10,7 @@
 
 ### Description
 
-This  Multinational Retail Data Centralisation tool is a robust solution designed for comprehensive data management within a large-scale retail organisation. The primary aim is to streamline the intricate process of consolidating diverse data sets, including order details, product information, user details, and store data.
+This Multinational Retail Data Centralisation tool is a robust solution designed for comprehensive data management within a large-scale retail organisation. The primary aim is to streamline the process of consolidating diverse data sets, including order details, product information, user details, and store data.
 
 #### Objectives:
 
@@ -28,7 +28,7 @@ This  Multinational Retail Data Centralisation tool is a robust solution designe
 
 Throughout the development of this tool, key insights were gained:
 
-- **Star-Based Schema Optimization:** Understanding and implementing a star-based database schema proved instrumental in supplementing the efficiency of analytical queries. This structured approach to organising dimensions and fact tables facilitates smoother data analysis.
+- **Star-Based Schema Optimisation:** Understanding and implementing a star-based database schema proved instrumental in supplementing the efficiency of analytical queries. This structured approach to organising dimensions and fact tables facilitates greater data analysis.
 
 - **Column Casting and Data Type Precision:** Learning the importance of casting columns to their correct data types significantly improved the overall integrity of the database.
 
@@ -88,3 +88,4 @@ multinational-retail-data-centralisation/
 ```
 
 ## License
+This Multinational Retail Data Centralisation project is licensed under the MIT License. You are free to use, modify, and distribute this project for personal or educational purposes. 
