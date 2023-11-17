@@ -197,7 +197,7 @@ class DataCleaning:
         converted_weights_df = products_df.copy()
 
         def convert_to_kg(weight_str):
-            # Extract numeric value and unit (e.g., "100 ml" -> ("100", "ml")).
+            # Extract numeric value and unit (e.g. "100 ml" -> ("100", "ml")).
             match = re.match(r"([\d.]+)\s*(\w+)", str(weight_str))
             if match:
                 value, unit = match.groups()

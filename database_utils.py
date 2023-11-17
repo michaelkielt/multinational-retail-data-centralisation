@@ -14,7 +14,10 @@ class DataBaseConnector:
     Methods:
         _read_db_creds(self) -> dict:
             Reads database credentials from a YAML file and returns them as a dictionary.
-
+        
+        _read_headers(self) -> dict:
+            Reads API headers from a YAML file and returns them as a dictionary.
+            
         _init_db_engine(self) -> sqlalchemy.engine.base.Connection:
             Initialises a SQLAlchemy database engine using the retrieved credentials for a remote database.
 
@@ -38,7 +41,20 @@ class DataBaseConnector:
 
         return db_creds
     
-
+    
+    def _read_headers(self):
+        """Read headers from a YAML file."""
+        try:
+            with open('headers.yaml', 'r') as config_file:
+                self.config = yaml.safe_load(config_file)
+            api_key = self.config['api_key']
+            headers = {'x-api-key': api_key}
+            return headers
+        except (KeyError, FileNotFoundError) as e:
+            print(f"Error: {e}")
+            return None
+    
+    
     def _init_db_engine(self):
         """
         Create a database engine based on the database credentials read from db_creds.yaml.

@@ -37,15 +37,18 @@ class DataHandlingMain:
     def extract_and_upload_store_data(self):
         """Extract store data, clean it, and upload it to the database."""
         store_data_extractor = DataExtractor(self.db_engine)
-        headers = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'}
-        base_store_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/'
 
-        all_stores_df = store_data_extractor._retrieve_stores_data(base_store_endpoint, headers)
+        headers = self.db_connector._read_headers()
 
-        store_data_cleaner = DataCleaning(all_stores_df)
-        cleaned_store_data = store_data_cleaner._clean_store_data()
+        if headers:
+            base_store_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/'
 
-        self.db_connector._upload_to_db(cleaned_store_data, "dim_store_details")
+            all_stores_df = store_data_extractor._retrieve_stores_data(base_store_endpoint, headers)
+
+            store_data_cleaner = DataCleaning(all_stores_df)
+            cleaned_store_data = store_data_cleaner._clean_store_data()
+
+            self.db_connector._upload_to_db(cleaned_store_data, "dim_store_details")
 
     def extract_and_upload_product_data(self):
         """Extract product data, clean it, and upload it to the database."""
