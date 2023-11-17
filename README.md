@@ -43,11 +43,48 @@ Throughout the development of this tool, key insights were gained:
 
 ## Installation
 
+To install the MRDC application, please follow these instructions: 
+
+1. Clone the repository to your local computer using Git:
+
+   ```bash
+   https://github.com/michaelkielt/multinational-retail-data-centralisation.git
+   ```
+
+2. Navigate to the project directory:
+
+   ```bash
+   cd multinational-retail-data-centralisation
+   ```
+
+3. Run the application by executing the Python script:
+
+   ```bash
+   python main.py
+   ```
 
 ## Usage
-
+Running main.py will initiate the extraction, cleaning and uploading of the store data to a Postgres relational database.
 
 ## File Structure
+This is how I structured my files for this project:
 
+```
+multinational-retail-data-centralisation/
+│
+├── main.py             # Main Python script for the project
+│
+├── data_cleaning.py    # Python script for cleaning and preprocessing data within a DataFrame 
+│
+├── data_extraction.py  # Python script for extracting data and converting it to Pandas Dataframe
+│
+├── database_utils      # Python script for connecting to and interacting with databases
+│
+├── README.md           # Documentation and instructions
+│
+├── mrdc_business_queries.sql   # SQL file containing all the SQL queries for milestone 4 of the project.
+│
+└── .gitignore          # Gitignore file to specify which files to exclude from version control
+```
 
 ## License
