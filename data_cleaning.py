@@ -118,7 +118,6 @@ class DataCleaning:
         self.data.dropna(inplace=True)
 
         def convert_worded_date(worded_date):
-        # Check if the date matches the format 'YYYY Month DD' or 'Month YYYY DD'.
             match = re.match(r'(\d{4})-(\w+)-(\d{2})|(\d{4})-(\d{2})-(\w+)', worded_date)
     
             if match:
@@ -235,7 +234,6 @@ class DataCleaning:
         self.data.dropna(inplace=True)
 
         def convert_worded_date(worded_date):
-        # Check if the date matches the format 'YYYY Month DD' or 'Month YYYY DD'.
             match = re.match(r'(\d{4})-(\w+)-(\d{2})|(\d{4})-(\d{2})-(\w+)', worded_date)
     
             if match:

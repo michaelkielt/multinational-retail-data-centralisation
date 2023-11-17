@@ -22,7 +22,7 @@ class DataBaseConnector:
             Initialises a SQLAlchemy database engine using the retrieved credentials for a remote database.
 
         _init_local_db_engine(self) -> sqlalchemy.engine.base.Connection:
-            Initialises a SQLAlchemy database engine for a local database with pre-defined credentials.
+            Initialises a SQLAlchemy database engine for a local database with retrieved credentials.
 
         _upload_to_db(self, df: pandas.DataFrame, table_name: str):
             Uploads a cleaned Pandas DataFrame to a PostgreSQL database table, replacing the existing data.

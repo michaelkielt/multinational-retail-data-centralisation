@@ -92,10 +92,10 @@ class DataExtractor:
         try:
             pdf_data = tabula.read_pdf(pdf_path, pages='all', stream=False)
             if pdf_data:
-                combined_df = pd.concat(pdf_data)  # Combine DataFrames into a single DataFrame.
+                combined_df = pd.concat(pdf_data)
                 return combined_df
             else:
-                return pd.DataFrame()  # Return an empty DataFrame if no data is found.
+                return pd.DataFrame()
         except Exception as e:
             print(f'Error retrieving PDF data: {str(e)}')
             return pd.DataFrame()
@@ -119,9 +119,9 @@ class DataExtractor:
                 if 'number_stores' in no_of_store_data:
                     return no_of_store_data['number_stores']
                 else:
-                    return None  # 'number_stores' key not found in the response.
+                    return None 
             else:
-                return None  # Request was unsuccessful.
+                return None 
         except Exception as e:
             print(f'Error: {e}')
             return None 
